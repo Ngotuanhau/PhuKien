@@ -4,15 +4,15 @@ import Router from "vue-router";
 import store from "./store";
 
 import Home from "./views/Home.vue";
-import SignUp from "./views/Auth/SignUp.vue";
-import Login from "./views/Auth/Login.vue";
+import SignUp from "./views/Auth/SignUp";
+import Login from "./views/Auth/Login";
 import ResetPass from "./views/Auth/ResetPass";
 import ChangePass from "./views/Auth/ChangePass";
 
-import Manage from "./views/AdminLayout/Manage.vue";
+import Manage from "./views/AdminLayout/Manage";
 
-import About from "./views/GuestLayout/About.vue";
-import Me from "./views/GuestLayout/Me.vue";
+import About from "./views/GuestLayout/About";
+import Me from "./views/GuestLayout/Me";
 
 Vue.use(Router);
 
@@ -35,6 +35,9 @@ let router = new Router({
                         requiresAuth: true,
                         roles: ["user"]
                     },
+                    component: {
+                        render: h => h("router-view")
+                    },
                     children: [{
                             path: "/about",
                             name: "about",
@@ -52,6 +55,9 @@ let router = new Router({
                     meta: {
                         requiresAuth: true,
                         roles: ["admin"]
+                    },
+                    component: {
+                        render: h => h("router-view")
                     },
                     children: [{
                         path: "/manage",

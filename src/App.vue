@@ -1,5 +1,4 @@
 <template>
-  <!-- isAdmin.role === 'admin' &&  -->
   <v-app>
     <v-navigation-drawer v-model="drawer" app></v-navigation-drawer>
     <v-app-bar @toogle="drawer=!drawer" app></v-app-bar>

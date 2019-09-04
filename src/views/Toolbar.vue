@@ -1,6 +1,6 @@
 <template>
   <div class="c-toolbar">
-    <v-app-bar class="c-bg-toolbar" flat absolute>
+    <v-app-bar class="c-bg-toolbar" absolute>
       <v-app-bar-nav-icon class="hidden-sm-and-up" @click.stop="$emit('toogle')"></v-app-bar-nav-icon>
       <v-spacer class="hidden-sm-and-up"></v-spacer>
       <v-toolbar-title>
@@ -13,11 +13,11 @@
         <v-btn text class="c-btn">
           <router-link to="/" class="c-text">Home</router-link>
         </v-btn>
-        <v-btn text class="c-btn" v-if="isAdmin.role === 'admin'">
+        <v-btn text class="c-btn" v-if="isAdmin.role === 'admin' && isAuthenticated">
           <router-link to="/manage" class="c-text">Manage</router-link>
         </v-btn>
 
-        <v-flex v-if="isAdmin.role === 'user'" class="c-g-btn">
+        <v-flex v-if="isAdmin.role === 'user' && isAuthenticated" class="c-g-btn">
           <v-btn text class="c-btn">
             <router-link to="/about" class="c-text">About Us</router-link>
           </v-btn>

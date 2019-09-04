@@ -7,6 +7,16 @@ Vue.use(Vuetify);
 
 export default new Vuetify({
     icons: {
-        iconfont: "mdi"
+        iconfont: "mdi",
+        values: {
+            eye: "mdi-eye",
+            eye_off: "mdi-eye-off",
+            account: "mdi-account",
+            pencil: "mdi-pencil",
+            facebook: "mdi-facebook",
+            delete: "mdi-delete",
+            close: "mdi-close-circle",
+            plus: "mdi-plus-box-outline"
+        }
     }
 });

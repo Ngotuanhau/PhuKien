@@ -1,25 +1,106 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Home from './views/Home.vue'
+/* eslint-disable */
+import Vue from "vue";
+import Router from "vue-router";
+import store from "./store";
 
-Vue.use(Router)
+import Home from "./views/Home.vue";
+import SignUp from "./views/Auth/SignUp.vue";
+import Login from "./views/Auth/Login.vue";
+import ResetPass from "./views/Auth/ResetPass";
 
-export default new Router({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: Home
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+import Manage from "./views/AdminLayout/Manage.vue";
+
+import About from "./views/GuestLayout/About.vue";
+import Me from "./views/GuestLayout/Me.vue";
+
+Vue.use(Router);
+
+let router = new Router({
+    mode: "history",
+    base: process.env.BASE_URL,
+    routes: [{
+            // name: "home",
+            path: "/",
+            component: {
+                render: h => h("router-view")
+            },
+            children: [{
+                    path: "/",
+                    name: "home",
+                    component: Home
+                },
+                {
+                    path: "/guest",
+                    meta: {
+                        requiresAuth: true,
+                        roles: ["user"]
+                    },
+                    children: [{
+                            path: "/about",
+                            name: "about",
+                            component: About
+                        },
+                        {
+                            path: "/me",
+                            name: "me",
+                            component: Me
+                        }
+                    ]
+                },
+                {
+                    path: "/admin",
+                    meta: {
+                        requiresAuth: true,
+                        roles: ["admin"]
+                    },
+                    children: [{
+                        path: "/manage",
+                        name: "manage",
+                        component: Manage
+                    }]
+                }
+            ]
+        },
+        {
+            path: "/sign_up",
+            name: "sign_up",
+            component: SignUp
+        },
+        {
+            path: "/login",
+            name: "login",
+            component: Login
+        },
+        {
+            path: "/reset_pass",
+            name: "reset_pass",
+            component: ResetPass
+        }
+    ]
+});
+
+router.beforeEach((to, from, next) => {
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        const authUser = store.state.Auth.user;
+        if (store.getters.isAuthenticated) {
+            if (!to.meta.roles) {
+                return next();
+            }
+            if (to.meta.roles.includes(authUser.role)) {
+                switch (authUser.role) {
+                    case "user":
+                        next({ path: "/guest" });
+                        break;
+                    case "admin":
+                        next({ path: "/admin" });
+                        break;
+                    default:
+                        next({ path: "/" });
+                }
+            }
+        }
     }
-  ]
-})
+    return next();
+});
+
+export default router;

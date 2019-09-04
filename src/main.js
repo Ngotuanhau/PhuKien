@@ -5,6 +5,10 @@ import router from "./router";
 import store from "./store";
 import "./registerServiceWorker";
 import vuetify from "./plugins/vuetify";
+import axios from "./plugins/axios";
+import "./vee-validate";
+
+Vue.use(axios);
 
 Vue.config.productionTip = false;
 

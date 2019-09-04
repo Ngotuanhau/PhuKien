@@ -3,46 +3,35 @@
     <v-layout>
       <v-flex class="c-form-login" xs6 md6 offset-md3 offset-xs3 pa-5>
         <div class="c-text-header display-2 mb-8">My Account</div>
+
+        <v-flex my-5>
+          <span
+            class="c-tran-login"
+          >Please! enter your email, press the button and check mail to follow instruction</span>
+        </v-flex>
         <ValidationObserver ref="observer">
           <v-form slot-scope="{ invalid, validated }">
             <VTextFieldWithValidation rules="required|email" v-model="email" label="E-mail" />
-            <VTextFieldWithValidation
-              rules="required|min:6"
-              v-model="password"
-              label="Password"
-              :append-icon="show ? '$vuetify.icons.eye' : '$vuetify.icons.eye_off'"
-              @click:append="show = !show"
-              :type="show ? 'text' : 'password'"
-            />
-
-            <span class="animated">
-              <li>
-                <router-link
-                  to="/reset_pass"
-                  class="c-tran-forgot font-weight-regular font-italic"
-                >Forgot your password !</router-link>
-              </li>
-            </span>
 
             <v-flex class="c-button">
               <v-btn
-                class="c-btn c-btn-login"
+                class="c-btn c-btn-send"
                 text
                 @click.prevent="submit"
                 :disabled="invalid || !validated"
               >
-                <span class="c-btn-login-text">Sign In</span>
+                <span class="c-btn-login-text">SEND</span>
               </v-btn>
             </v-flex>
           </v-form>
         </ValidationObserver>
 
-        <span class="animated c-btn-create">
+        <span class="animated c-tran-login">
           <li>
             <router-link
-              class="c-tran-create font-weight-regular font-italic"
-              to="/sign_up"
-            >Create An Acount!</router-link>
+              class="c-tran-login font-weight-regular font-italic"
+              to="/login"
+            >go back Login!</router-link>
           </li>
         </span>
       </v-flex>
@@ -52,7 +41,7 @@
 
 <script>
 import { ValidationObserver } from "vee-validate";
-import VTextFieldWithValidation from "../../components/input/VTextFieldWithValidation";
+import VTextFieldWithValidation from "@/components/input/VTextFieldWithValidation";
 
 export default {
   components: {
@@ -63,32 +52,44 @@ export default {
   data() {
     return {
       email: "",
-      password: "",
       show: false
     };
   },
 
   methods: {
     submit() {
-      const user = {
-        email: this.email,
-        password: this.password
-      };
-      this.$store
-        .dispatch("login", user)
-        .then(() => this.$router.push("/"))
-        .catch(error =>
+      const email = this.email;
+      axios
+        .post("/forgot_password", { email })
+        .then(response => {
+          console.log(response);
+          this.$store.commit(
+            "showSnackbar",
+            {
+              message: response.data.message,
+              timeout: 10000,
+              multiline: false,
+              type: "success"
+            },
+            { module: "Snackbar" }
+          );
+        })
+        .catch(error => {
           this.$store.commit(
             "showSnackbar",
             {
               message: error.response.data.message,
-              timeout: 4000,
+              timeout: 3000,
               multiline: false,
               type: "error"
             },
             { module: "Snackbar" }
-          )
-        );
+          );
+        });
+      this.email = "";
+      requestAnimationFrame(() => {
+        this.$refs.observer.reset();
+      });
     }
   }
 };
@@ -113,7 +114,7 @@ export default {
   margin: 20px 0;
 }
 
-.c-btn-login {
+.c-btn-send {
   width: 100%;
   background-color: #f44336;
 }
@@ -122,15 +123,11 @@ export default {
   color: #fff;
 }
 
-.c-btn-create {
+.c-tran-login {
+  color: black;
+  text-decoration: none;
   display: flex;
   justify-content: center;
-}
-
-.c-tran-forgot,
-.c-tran-create {
-  color: rgba(0, 0, 0, 0.5);
-  text-decoration: none;
 }
 
 .animated li {

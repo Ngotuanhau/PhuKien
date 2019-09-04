@@ -8,6 +8,11 @@ import en from "vee-validate/dist/locale/en.json";
 extend("required", required);
 extend("min", min);
 extend("email", email);
+extend("password", {
+    validate: (value, { other }) => value === other,
+    message: "The password confirmation does not match.",
+    params: [{ name: "other", isTarget: true }]
+});
 
 // Install messages
 localize({

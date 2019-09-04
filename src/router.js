@@ -7,6 +7,7 @@ import Home from "./views/Home.vue";
 import SignUp from "./views/Auth/SignUp.vue";
 import Login from "./views/Auth/Login.vue";
 import ResetPass from "./views/Auth/ResetPass";
+import ChangePass from "./views/Auth/ChangePass";
 
 import Manage from "./views/AdminLayout/Manage.vue";
 
@@ -19,7 +20,6 @@ let router = new Router({
     mode: "history",
     base: process.env.BASE_URL,
     routes: [{
-            // name: "home",
             path: "/",
             component: {
                 render: h => h("router-view")
@@ -75,6 +75,11 @@ let router = new Router({
             path: "/reset_pass",
             name: "reset_pass",
             component: ResetPass
+        },
+        {
+            path: "/change_pass/:token/:email",
+            name: "change_pass",
+            component: ChangePass
         }
     ]
 });

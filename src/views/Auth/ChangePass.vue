@@ -4,41 +4,8 @@
       <v-flex class="c-form-login" xs6 md6 offset-md3 offset-xs3 pa-5>
         <div class="c-text-header display-2 mb-8">My Account</div>
 
-        <!-- Form validate -->
         <ValidationObserver ref="observer">
           <v-form slot-scope="{ invalid, validated }">
-            <ValidationProvider name="User name" rules="required|min:6">
-              <v-text-field
-                slot-scope="{errors,valid}"
-                v-model="username"
-                :counter="30"
-                :error-messages="errors"
-                :success="valid"
-                label="User name"
-                required
-              ></v-text-field>
-            </ValidationProvider>
-            <ValidationProvider name="Phone number" rules="required|min:10">
-              <v-text-field
-                slot-scope="{errors,valid}"
-                v-model="phone"
-                :counter="12"
-                :error-messages="errors"
-                :success="valid"
-                label="Phone number"
-                required
-              ></v-text-field>
-            </ValidationProvider>
-            <ValidationProvider name="E-mail" rules="required|email">
-              <v-text-field
-                slot-scope="{errors,valid}"
-                v-model="email"
-                :error-messages="errors"
-                :success="valid"
-                label="E-mail"
-                required
-              ></v-text-field>
-            </ValidationProvider>
             <ValidationProvider name="Password" rules="required|min:6" vid="confirmation">
               <v-text-field
                 slot-scope="{errors,valid}"
@@ -62,28 +29,18 @@
               ></v-text-field>
             </ValidationProvider>
 
-            <span class="animated">
-              <li>
-                <router-link
-                  to="/reset_pass"
-                  class="c-tran-forgot font-weight-regular font-italic"
-                >Forgot your password</router-link>
-              </li>
-            </span>
-
             <v-flex class="c-button">
               <v-btn
                 @click.native="submit"
                 :disabled="invalid || !validated"
-                class="c-btn c-btn-singup"
+                class="c-btn c-btn-reset mb-3"
                 text
               >
-                <span class="c-btn-login-text">Sign up</span>
+                <span class="c-btn-reset-text">RESET PASSWORD</span>
               </v-btn>
             </v-flex>
           </v-form>
         </ValidationObserver>
-        <!-- Form validate -->
 
         <span class="animated c-tran-login">
           <li>
@@ -107,29 +64,21 @@ export default {
     ValidationProvider
   },
 
-  props: ["message"],
-
   data() {
     return {
-      username: "",
-      phone: "",
-      email: "",
       password: "",
-      passwordConfirm: ""
+      passwordConfirm: "",
+      show: false
     };
   },
 
   methods: {
     submit() {
-      const user = {
-        username: this.username,
-        phone: this.phone,
-        email: this.email,
-        password: this.password,
-        passwordConfirm: this.passwordConfirm
-      };
       axios
-        .post("/signup", user)
+        .post(
+          `/change_password/${this.$route.params.token}/${this.$route.params.email}`,
+          { password: this.password, passwordConfirm: this.passwordConfirm }
+        )
         .then(response => {
           console.log(response);
           this.$store.commit(
@@ -143,19 +92,6 @@ export default {
             { module: "Snackbar" }
           );
           this.$router.push("/login");
-        })
-        .catch(error => {
-          this.$store.commit(
-            "showSnackbar",
-            {
-              message: error.response.data.message,
-              timeout: 3000,
-              multiline: false,
-              type: "error"
-            },
-            { module: "Snackbar" }
-          );
-          return;
         });
     }
   }
@@ -181,22 +117,18 @@ export default {
   margin: 20px 0;
 }
 
-.c-btn-singup {
+.c-btn-reset {
   width: 100%;
   background-color: #f44336;
 }
 
-.c-btn-login-text {
+.c-btn-reset-text {
   color: #fff;
 }
 
-.c-tran-login,
-.c-tran-forgot {
+.c-tran-login {
   color: rgba(0, 0, 0, 0.5);
   text-decoration: none;
-}
-
-.c-tran-login {
   display: flex;
   justify-content: center;
 }

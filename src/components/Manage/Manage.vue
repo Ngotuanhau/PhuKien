@@ -38,13 +38,27 @@
             </template>
           </v-data-table>
         </div>
+        <v-delete v-model="dialog_delete" :item="currentItem" @deleteProduct="deleteItem" />
+        <v-create v-model="dialog_create" @reload="reload" />
       </template>
     </v-layout>
   </v-container>
 </template>
 
 <script>
+import Delete from "../Dialog/Delete";
+import Create from "../Dialog/Create";
+
 export default {
+  props: {
+    product: {}
+  },
+
+  components: {
+    vDelete: Delete,
+    vCreate: Create
+  },
+
   data() {
     return {
       totalProducts: 0,
@@ -75,7 +89,7 @@ export default {
   watch: {
     options: {
       immediate: true,
-      handler(val) {
+      handler() {
         this.getData().then(data => {
           console.log("watch", data);
           this.products = data.items;
@@ -89,35 +103,15 @@ export default {
     getData(page) {
       this.loading = true;
       return new Promise((resolve, reject) => {
-        const { sortBy, descending, page, itemsPerPage } = this.options;
-        // console.log(this.options);
+        const { page, itemsPerPage } = this.options;
 
         const response = axios.get(`/products?page=${page}`).then(response => {
-          // console.log(response);
+          console.log(response);
           let items = response.data.data;
           const total = items.length;
           this.totalProducts = response.data.total;
 
-          // console.log(total);
-          if (this.options.sortBy) {
-            items = items.sort((a, b) => {
-              const sortA = a[sortBy];
-              const sortB = b[sortBy];
-
-              if (descending) {
-                if (sortA < sortB) return 1;
-                if (sortA > sortB) return -1;
-                return 0;
-              } else {
-                if (sortA < sortB) return -1;
-                if (sortA > sortB) return 1;
-                return 0;
-              }
-            });
-          }
-
           if (itemsPerPage > 0) {
-            console.log(items);
             let newItems = items.slice(
               (page - 1) * itemsPerPage,
               page * itemsPerPage
@@ -129,6 +123,26 @@ export default {
             resolve({ items, total });
           }, 1000);
         });
+      });
+    },
+
+    openDelete(item) {
+      this.currentItem = item;
+      this.dialog_delete = true;
+    },
+
+    deleteItem(id) {
+      axios.delete(`/products/${id}`).then(response => {
+        this.getData().then(data => {
+          this.products = data.items;
+        });
+      });
+      this.dialog_delete = false;
+    },
+
+    reload() {
+      this.getData().then(data => {
+        this.products = data.items;
       });
     }
   }

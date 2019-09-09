@@ -4,12 +4,14 @@ import Vue from "vue";
 
 import Auth from "./modules/Auth";
 import Snackbar from "./modules/Snackbar";
+import Products from "./modules/Products";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     modules: {
         Auth,
-        Snackbar
+        Snackbar,
+        Products
     }
 });

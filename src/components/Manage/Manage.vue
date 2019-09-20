@@ -91,7 +91,7 @@ export default {
       immediate: true,
       handler() {
         this.getData().then(data => {
-          console.log("watch", data);
+          // console.log("watch", data);
           this.products = data.items;
         });
       },
@@ -106,7 +106,7 @@ export default {
         const { page, itemsPerPage } = this.options;
 
         const response = axios.get(`/products?page=${page}`).then(response => {
-          console.log(response);
+          // console.log(response);
           let items = response.data.data;
           const total = items.length;
           this.totalProducts = response.data.total;
